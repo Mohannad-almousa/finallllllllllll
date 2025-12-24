@@ -38,9 +38,11 @@
 
         /* ===== CONTAINER ===== */
         .container{
-            max-width:1200px;
+            max-width:none;
             margin:40px auto;
             padding:20px;    /* إضافة مسافة داخلية */
+            width: 100%;
+            height: 50%;
         }
 
         /* ===== HERO ===== */
@@ -49,32 +51,150 @@
             border-radius:25px;                      /* جعل الزوايا دائرية */
             padding:90px 80px;                    /* إضافة مسافة داخلية */
             color:#fff;                        /* تحديد اللون للنص */
-        } 
+            position: relative;
+            overflow: hidden;
+            
+        }
 
+        /* ==== HERO (Extras to match screenshot) ==== */
         .hero h1{
-            font-size:42px;
-            margin-bottom:20px;
+            display:flex;
+            align-items:baseline;
+            gap:10px;
+            flex-wrap:wrap;
+            margin-bottom:18px;
         }
 
-        .hero span{
+        .hero h1 .welcome{
             color:#D1E231;
-            font-weight:800;
+            font-weight:900;
+            font-size:46px;
+            letter-spacing:1px;
+            text-transform:uppercase;
         }
 
-        .hero p{
+        .hero h1 .welcome-sub{
+            color:#ffffff;
+            font-weight:700;
             font-size:18px;
+            opacity:0.95;
+        }
+
+        .hero-tagline{
+            font-size:24px;
+            margin-bottom:18px;
+            color:#ffffff;
+            opacity:0.95;
+            font-style:italic;
+        }
+
+        .hero-tagline .highlight{
+            color:#D1E231;
+            font-weight:900;
+            font-style:italic;
+        }
+
+        .hero-desc{
+            font-size:15px;
             color:#e7e7e7;
-            margin-bottom:40px;
+            margin-bottom:34px;
             line-height:1.7;
             max-width:650px;
         }
 
         .hero button{
-            padding:12px 36px;
+            padding:10px 28px;
             border-radius:30px;
             border:none;
-            font-size:16px;
+            font-size:14px;
             cursor:pointer;
+            background:#ffffff;
+            color:#442C93;
+            font-weight:700;
+            box-shadow:0 10px 25px rgba(0,0,0,0.18);
+        }
+
+        .hero button:hover{
+            transform: translateY(-1px);
+        }
+
+        /* ===== HOW IT WORKS (Added) ===== */
+        .how-it-works{
+            margin-top:42px;
+            text-align:center;
+        }
+
+        .how-it-works h2{
+            font-size:28px;
+            color:#442C93;
+            margin-bottom:10px;
+            font-weight:900;
+        }
+
+        .how-it-works .how-sub{
+            font-size:13px;
+            color:#6b6b6b;
+            margin-bottom:26px;
+        }
+
+        .steps{
+            display:flex;
+            gap:18px;
+            justify-content:space-between;
+            flex-wrap:wrap;
+        }
+
+        .step-card{
+            flex:1;
+            min-width:260px;
+            background:#f2f2ef;
+            border-radius:16px;
+            padding:18px 18px;
+            text-align:left;
+            box-shadow:0 10px 25px rgba(0,0,0,0.06);
+            display:flex;
+            gap:12px;
+            align-items:flex-start;
+        }
+
+        .step-icon{
+            width:36px;
+            height:36px;
+            border-radius:12px;
+            background:#ffffff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            box-shadow:0 8px 18px rgba(0,0,0,0.08);
+            flex:0 0 auto;
+        }
+
+        .step-icon svg{
+            width:18px;
+            height:18px;
+            stroke:#442C93;
+        }
+
+        .step-card h3{
+            font-size:14px;
+            color:#442C93;
+            margin-bottom:6px;
+            font-weight:900;
+        }
+
+        .step-card p{
+            font-size:12px;
+            color:#6b6b6b;
+            line-height:1.5;
+        }
+
+        /* Responsive tweaks */
+        @media (max-width: 768px){
+            header{padding:14px 18px;}
+            .hero{padding:60px 22px;}
+            .hero h1 .welcome{font-size:40px;}
+            .hero-tagline{font-size:20px;}
+            nav{gap:16px;}
         }
 
         /* =========================== Chat Icon =========================== */
@@ -216,12 +336,76 @@
 
 <main class="container">
   <section class="hero">
-    <h1><span>WELCOME</span> To Research Quest Platform</h1>
-    <p>
-      Master the art of scientific inquiry.
-      Learn by doing through interactive modules and challenges.
+    <!-- عدلت العنوان ليصير مثل الصورة (WELCOME + To Research Quest Platform) -->
+    <h1>
+      <span class="welcome">WELCOME</span>
+      <span class="welcome-sub">To Research Quest Platform</span>
+    </h1>
+
+    <!-- سطر الإضافة الموجود بالصورة: Master the art of scientific inquiry. -->
+    <div class="hero-tagline">
+      Master the art of <span class="highlight">scientific</span> inquiry.
+    </div>
+
+    <!-- النص الطويل مثل الصورة -->
+    <p class="hero-desc">
+      Don't just read about research, do it. Solve puzzles,
+      design experiments, and write your thesis with
+      interactive guidance.
     </p>
+
     <button onclick="location.href='modules.html'">Start</button>
+  </section>
+
+  <!-- ===== How It Works (الإضافة اللي بالصورة) ===== -->
+  <section class="how-it-works">
+    <h2>How It Works</h2>
+    <div class="how-sub">Three simple steps to master research concepts through gamification.</div>
+
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-icon" aria-hidden="true">
+          <!-- User icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21a8 8 0 0 0-16 0"></path>
+            <circle cx="12" cy="8" r="4"></circle>
+          </svg>
+        </div>
+        <div>
+          <h3>1. Create Profile</h3>
+          <p>Sign up to access your personalized dashboard and begin your journey through the research tiers.</p>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-icon" aria-hidden="true">
+          <!-- Play icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="8,5 19,12 8,19"></polygon>
+          </svg>
+        </div>
+        <div>
+          <h3>2. Play Modules</h3>
+          <p>Engage with interactive Unity mini-games designed to teach complex methodologies simply.</p>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-icon" aria-hidden="true">
+          <!-- Gift icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 12v10H4V12"></path>
+            <path d="M2 7h20v5H2z"></path>
+            <path d="M12 22V7"></path>
+            <path d="M12 7c-1.5 0-3-1.2-3-2.7S10.4 2 12 4c1.6-2 3-1.2 3 0.3S13.5 7 12 7z"></path>
+          </svg>
+        </div>
+        <div>
+          <h3>3. Earn Rewards</h3>
+          <p>Collect badges, maintain streaks, and climb the leaderboard as you master new skills.</p>
+        </div>
+      </div>
+    </div>
   </section>
 </main>
 
