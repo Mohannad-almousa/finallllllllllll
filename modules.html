@@ -58,9 +58,10 @@
 
         /* ================= CONTAINER ================= */
         .container{
-            max-width:1200px;
+            max-width:none;
             margin:40px auto;
             padding:20px;
+            width: 100%;
         }
 
         .page-title{
@@ -341,91 +342,74 @@
 </div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBS6WZ13DKVvbdddE-azZrI2FuBrSe39u0",
-      authDomain: "login-1aba2.firebaseapp.com",
-      projectId: "login-1aba2",
-      storageBucket: "login-1aba2.appspot.com",
-      messagingSenderId: "393759404087",
-      appId: "1:393759404087:web:9581fde1afb9ca81decfb2"
+  const firebaseConfig = {
+    apiKey: "AIzaSyBS6WZ13DKVvbdddE-azZrI2FuBrSe39u0",
+    authDomain: "login-1aba2.firebaseapp.com",
+    projectId: "login-1aba2",
+    storageBucket: "login-1aba2.appspot.com",
+    messagingSenderId: "393759404087",
+    appId: "1:393759404087:web:9581fde1afb9ca81decfb2"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const PASS_THRESHOLD = 60;
+
+  // نفس أسماء الداشبورد تماماً
+  const beginnerLevels = ["Default_Config_Trivia"];
+  const intermediateLevels = ["Default_Config_Sequencer"];
+  const advancedLevels = ["Default_Config_ErrorHunter"];
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) return;
+
+    const snap = await getDoc(doc(db, "progress", user.uid));
+    const progress = snap.exists() ? snap.data() : {};
+
+    const scores = {
+      beginner: progress[beginnerLevels[0]]?.score || 0,
+      intermediate: progress[intermediateLevels[0]]?.score || 0,
+      advanced: progress[advancedLevels[0]]?.score || 0
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-
-    const PASS_THRESHOLD = 70; 
-
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            await checkProgress(user.uid);
-        } else {
-            console.log("User not logged in");
-        }
-    });
-
-    async function checkProgress(uid) {
-        try {
-            const sessionsRef = collection(db, "Sessions");
-            const q = query(sessionsRef, where("uid", "==", uid));
-            const querySnapshot = await getDocs(q);
-
-            // تم التعديل هنا لتشمل المعرف الجديد للمستوى المتقدم
-            let scores = {
-                "Default_Config_Sequencer": 0,
-                "Default_Config_ErrorHunter": 0,
-                "Default_Config_Trivia": 0 
-            };
-
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                const lessonId = data.lessonID || data.lesson_id;
-                if (scores.hasOwnProperty(lessonId)) {
-                    if (data.score > scores[lessonId]) {
-                        scores[lessonId] = data.score;
-                    }
-                }
-            });
-
-            unlockLevels(scores);
-        } catch (error) {
-            console.error("Error fetching progress:", error);
-        }
+    // === نفس منطق الداشبورد ===
+    if (scores.beginner >= PASS_THRESHOLD) {
+      unlock("level2", "Start Level 2");
     }
 
-    function unlockLevels(scores) {
-        // فحص سكور المستوى المبتدئ لفتح المتوسط
-        if (scores["Default_Config_Sequencer"] >= PASS_THRESHOLD) {
-            const l2 = document.getElementById("level2");
-            const btn2 = l2.querySelector(".start-btn");
-            l2.classList.remove("locked");
-            btn2.classList.remove("locked");
-            btn2.innerText = "Start Level 2";
-        }
-
-        // فحص سكور المستوى المتوسط لفتح المتقدم
-        if (scores["Default_Config_ErrorHunter"] >= PASS_THRESHOLD) {
-            const l3 = document.getElementById("level3");
-            const btn3 = l3.querySelector(".start-btn");
-            l3.classList.remove("locked");
-            btn3.classList.remove("locked");
-            btn3.innerText = "Start Level 3";
-        }
+    if (scores.intermediate >= PASS_THRESHOLD) {
+      unlock("level3", "Start Level 3");
     }
+  });
 
-    window.startLevel = function(level) {
-        const card = document.getElementById(`level${level}`);
-        if (card.classList.contains("locked")) {
-            alert("Please score 70+ in the previous level to unlock this one!");
-            return;
-        }
-        window.location.href = `level${level}.html`;
-    };
+  function unlock(levelId, text) {
+    const card = document.getElementById(levelId);
+    if (!card) return;
+
+    const btn = card.querySelector(".start-btn");
+    card.classList.remove("locked");
+    if (btn) {
+      btn.classList.remove("locked");
+      btn.innerText = text;
+    }
+  }
+
+  window.startLevel = function(level) {
+    const card = document.getElementById(`level${level}`);
+    if (card.classList.contains("locked")) {
+      alert("Please complete the previous level with 70+ to unlock this level.");
+      return;
+    }
+    window.location.href = `level${level}.html`;
+  };
 </script>
+
 
 <!-- ✅ Chatbot Script -->
 <script src="chatbot.js"></script> 
