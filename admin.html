@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- لا حاجة لإضافة favicon هنا -->
+</head>
+<body>
+
+<h1>Admin Dashboard</h1>
+<p>Manage users and disable or delete accounts.</p>
+
+<table id="userTable">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Created At</th>
+            <th>Last Login</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- User data will be inserted here -->
+    </tbody>
+</table>
+
+<button id="logoutBtn">Logout</button>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+  import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js"; 
+  import { getFirestore, collection, getDocs, doc, getDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js"; 
+
+  // Firebase Configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyBS6WZ13DKVvbdddE-azZrI2FuBrSe39u0",
+    authDomain: "login-1aba2.firebaseapp.com",
+    projectId: "login-1aba2",
+    storageBucket: "login-1aba2.appspot.com",
+    messagingSenderId: "393759404087",
+    appId: "1:393759404087:web:9581fde1afb9ca81decfb2"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth();
+  const db = getFirestore(app);
+  const userTable = document.getElementById("userTable").getElementsByTagName('tbody')[0];
+  const logoutBtn = document.getElementById("logoutBtn");
+
+  // Logout functionality
+  logoutBtn.addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.href = "login.html"; // Redirect to login page
+  });
+
+  // Fetch Users from Firestore
+  const fetchUsers = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "users"));
+      if (querySnapshot.empty) {
+        console.log("No users found!");
+      } else {
+        querySnapshot.forEach(doc => {
+          const userData = doc.data();
+          const row = userTable.insertRow();
+          row.insertCell(0).textContent = userData.email;
+          row.insertCell(1).textContent = userData.name || "No name";
+          row.insertCell(2).textContent = userData.createdAt ? new Date(userData.createdAt.seconds * 1000).toLocaleString() : "No date";
+          row.insertCell(3).textContent = userData.lastLogin ? new Date(userData.lastLogin.seconds * 1000).toLocaleString() : "Never";
+          
+          // Add action buttons
+          const actionsCell = row.insertCell(4);
+          actionsCell.innerHTML = `
+            <button onclick="disableUser('${doc.id}')">Disable User</button>
+            <button onclick="deleteUserData('${doc.id}')">Delete User</button>
+          `;
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching users: ", error);
+    }
+  };
+
+  // Disable User - Update Firestore field (disabled)
+  window.disableUser = async (userId) => {
+    const userRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userRef);
+
+    if (userDoc.exists()) {
+        try {
+            // Disable the user's account by updating the 'disabled' field in Firestore
+            await updateDoc(userRef, { disabled: true });
+
+            alert('User account has been disabled successfully.');
+            location.reload();  // Reload the page to update the data
+        } catch (error) {
+            console.error("Error disabling user: ", error);
+        }
+    } else {
+        console.log("User not found.");
+    }
+  };
+
+  // Delete User Data from Firestore
+  window.deleteUserData = async (userId) => {
+    const userRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userRef);
+
+    if (userDoc.exists()) {
+      try {
+        // Deleting the user's data from Firestore (NOT Firebase Authentication)
+        await deleteDoc(userRef);
+
+        alert('User account data has been deleted successfully.');
+        location.reload();  // Reload the page to update the data
+      } catch (error) {
+        console.error("Error deleting user data: ", error);
+      }
+    } else {
+      console.log("User not found.");
+    }
+  };
+
+  // Load user data on page load
+  fetchUsers();
+</script>
+
+</body>
+</html>

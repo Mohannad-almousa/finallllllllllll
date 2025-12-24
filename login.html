@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login • Research Quest</title>
+  <link rel="stylesheet" href="pageStyle.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body class="auth-body">
+
+  <div class="auth-shell">  <!--لجميع العناصر-->
+    
+    <!-- LEFT SIDE -->
+    <aside class="auth-left">   <!-- الجزء الأيسر من الصفحة -->
+      <div class="auth-left-top">
+        <div class="auth-logo-mini">Research Quest</div>   <!-- شعار للموقع-->
+      </div>
+
+      <div class="auth-left-center">
+        <h2>Master Research Skills</h2><!-- العنوان الرئيسي -->
+        <p>
+          Interactive modules, gamified progress, and a personalized dashboard
+          to help you become confident with scientific research.
+        </p>
+      </div>
+
+      <div class="auth-left-bottom">
+        text............................... <br>
+        .................................................<br>
+        .................................................<br>
+      </div>
+    </aside>
+
+    <!-- RIGHT SIDE -->
+    <main class="auth-right">
+
+      <div class="auth-header-top">
+        <div class="auth-title-wrap">
+          <h1>Welcome Back</h1>
+          <p class="login_title">Log in to continue your research journey.</p>
+        </div>
+
+        <div class="auth-tabs">
+          <a href="register.html" class="auth-tab">Sign Up</a>
+          <span class="auth-tab-active">Log In</span>
+        </div>
+      </div>
+
+      <form class="login_form"><!-- فورم تسجيل الدخول -->
+        <div class="input_box">
+          <i class="fa-solid fa-envelope"></i>    <!-- أيقونة البريد الإلكتروني -->
+          <input type="text" id="email" placeholder="Your e-mail">     <!-- حقل إدخال البريد الإلكتروني -->
+        </div>
+
+        <div class="input_box">
+          <i class="fa-solid fa-lock"></i>                <!-- أيقونة كلمة المرور -->
+          <input type="password" id="password" placeholder="Password">     <!-- حقل إدخال كلمة المرور -->
+        </div>
+
+        <div class="remember_forget_box">
+          <a href="ForgotPassword.html" id="forgotLink">Forgot Password?</a>    <!-- رابط لاستعادة كلمة المرور -->
+        </div>
+
+        <button type="button" class="login_btn">Log In</button>   <!-- زر لتسجيل الدخول -->
+
+        <p class="register">
+          Don't have an account?
+          <a href="register.html">Create one</a>   <!-- رابط لإنشاء حساب جديد -->
+        </p>
+
+        <div class="message_box"></div>    <!-- صندوق لعرض الرسائل مثل الأخطاء أو النجاح -->
+      </form>
+
+    </main>
+  </div>
+
+  <!-- Firebase Login Script -->
+  <script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+
+    import {
+      getFirestore,
+      doc,
+      updateDoc,
+      setDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBS6WZ13DKVvbdddE-azZrI2FuBrSe39u0",
+      authDomain: "login-1aba2.firebaseapp.com",
+      projectId: "login-1aba2",
+      storageBucket: "login-1aba2.appspot.com",
+      messagingSenderId: "393759404087",
+      appId: "1:393759404087:web:9581fde1afb9ca81decfb2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const btn = document.querySelector(".login_btn");      // الحصول على زر تسجيل الدخول
+    const message = document.querySelector(".message_box");   // الحصول على صندوق الرسائل
+
+
+    btn.addEventListener("click", (event) => {
+      event.preventDefault();                     // منع إرسال النموذج الافتراضي
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      message.style.display = "none";
+      message.classList.remove("error", "created");
+
+      if (!email || !password) {
+        message.textContent = "Please fill all fields!";      // عرض رسالة خطأ إذا كان هناك حقل فارغ
+        message.classList.add("error");
+        message.style.display = "block";
+        return;
+      }
+      // محاولة تسجيل الدخول باستخدام Firebase
+      
+      signInWithEmailAndPassword(auth, email, password)
+        .then(async () => {
+          const user = auth.currentUser;            // الحصول على المستخدم الحالي
+          const userRef = doc(db, "users", user.uid);  // مرجع مستند المستخدم في قاعدة البيانات
+
+          try {  
+            // تحديث إذا الوثيقة موجودة
+            await updateDoc(userRef, {
+              lastLogin: serverTimestamp()   // تحديث وقت آخر تسجيل دخول
+            });
+          } catch (err) {
+            // إنشاء الوثيقة إذا لم تكن موجودة
+            await setDoc(userRef, {
+              email: user.email,
+              createdAt: serverTimestamp(),
+              lastLogin: serverTimestamp()
+            });
+          }
+          // عرض رسالة نجاح
+          message.textContent = "Login successful!";
+          message.classList.add("created");
+          message.style.display = "block";
+         // إعادة التوجيه إلى الصفحة الرئيسية بعد تأخير
+          setTimeout(() => {
+            window.location.href = "home.html";
+          }, 800);
+        })
+        .catch((error) => {
+          message.classList.add("error");    // إذا فشل تسجيل الدخول، عرض رسالة خطأ
+
+          switch (error.code) {
+            case "auth/wrong-password":
+              message.textContent = "Wrong password!";
+              break;
+            case "auth/user-not-found":
+              message.textContent = "User not found!";
+              break;
+            case "auth/invalid-email":
+              message.textContent = "Invalid email format!";
+              break;
+            case "auth/missing-password":
+              message.textContent = "Please enter a password!";
+              break;
+            case "auth/too-many-requests":
+              message.textContent = "Too many attempts. Try again later!";
+              break;
+            default:
+              message.textContent = error.message;
+              break;
+          }
+
+          message.style.display = "block";    // عرض الرسالة للمستخدم بعد إتمام العملية
+        });
+    });
+
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Level 3 • Research Quest</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: Arial, sans-serif;
+}
+
+body{
+  background:#f7f7ef;
+  color:#222;
+}
+
+/* ================= BACK BUTTON ================= */
+.back-btn{
+  display:inline-block;
+  margin-bottom:18px;
+  padding:8px 18px;
+  border-radius:20px;
+  background:#faf7f0;
+  color:#442C93;
+  font-weight:600;
+  text-decoration:none;
+  border:1px solid #e0e0e0;
+  transition:0.25s;
+}
+.back-btn:hover{
+  background:#442C93;
+  color:#D1E231;
+}
+
+/* ================= NAVBAR ================= */
+header{
+  background:#442C93;
+  padding:14px 50px;
+  display:flex;
+  justify-content:center;
+}
+nav{
+  display:flex;
+  gap:30px;
+}
+nav a{
+  color:#fff;
+  text-decoration:none;
+}
+nav a.active{
+  color:#D1E231;
+  font-weight:700;
+}
+
+/* ================= CONTAINER ================= */
+.container{
+  max-width:1200px;
+  margin:30px auto 50px;
+  padding:20px;
+}
+
+/* ================= TITLES ================= */
+.page-title{
+  font-size:28px;
+  color:#442C93;
+  margin-bottom:6px;
+}
+.page-sub{
+  color:#777;
+  margin-bottom:25px;
+}
+
+/* ================= GAME BOX ================= */
+.game-box{
+  background:linear-gradient(135deg,#0e061f,#442C93);
+  border-radius:25px;
+  height:800px;
+  margin-bottom:35px;
+  overflow:hidden;
+}
+.game-box iframe{
+  width:100%;
+  height:100%;
+  border:none;
+}
+
+/* ================= CONTENT ROW ================= */
+.content-row{
+  display:grid;
+  grid-template-columns: 2fr 1fr;
+  gap:30px;
+  align-items:start;
+}
+
+/* ================= TEXT CONTENT ================= */
+.content-box{
+  background:#ffffff;
+  border-radius:20px;
+  padding:30px;
+  height:360px;
+  overflow-y:auto;
+  box-shadow:0 8px 20px rgba(0,0,0,0.06);
+}
+.content-box h3{
+  font-size:20px;
+  color:#442C93;
+  margin-bottom:12px;
+}
+.section-title{
+  font-weight:700;
+  color:#442C93;
+  margin-top:14px;
+  margin-bottom:6px;
+  font-size:14px;
+}
+.content-box p{
+  font-size:14px;
+  line-height:1.7;
+  color:#555;
+  margin-bottom:10px;
+}
+.content-box ul{
+  padding-left:18px;
+  margin-bottom:10px;
+}
+.content-box ul li{
+  font-size:14px;
+  margin-bottom:6px;
+  color:#444;
+}
+
+/* ===== Yellow Scrollbar ===== */
+.content-box::-webkit-scrollbar{
+  width:6px;
+}
+.content-box::-webkit-scrollbar-thumb{
+  background:#D1E231;
+  border-radius:10px;
+}
+
+/* ================= VIDEO ================= */
+.video-container{
+  height:360px;
+  border-radius:20px;
+  overflow:hidden;
+  background:#442C93;
+}
+.video-container iframe{
+  width:100%;
+  height:100%;
+  border:none;
+}
+
+/* ================= CHAT ================= */
+.chat-icon{
+  position:fixed;
+  bottom:30px;
+  right:30px;
+  width:55px;
+  height:55px;
+  background:#442C93;
+  color:#fff;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-size:24px;
+  z-index:1000;
+}
+
+.chat-wrapper{
+  position:fixed;
+  bottom:95px;
+  right:30px;
+  width:320px;
+  height:480px;
+  background:#fafafa;
+  border-radius:20px;
+  box-shadow:0 15px 40px rgba(0,0,0,0.25);
+  display:none;
+  flex-direction:column;
+  overflow:hidden;
+  z-index:999;
+}
+
+.chat-header{
+  background:#442C93;
+  padding:14px 18px;
+  color:#fff;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.chat-header-title{
+  font-size:15px;
+  font-weight:700;
+}
+.chat-header-sub{
+  font-size:12px;
+  opacity:0.8;
+}
+.close-btn{
+  cursor:pointer;
+  font-size:20px;
+}
+
+#chatBox{
+  flex:1;
+  padding:15px;
+  overflow-y:auto;
+  background:#f7f7f0;
+}
+
+.msg{
+  max-width:85%;
+  padding:12px 14px;
+  border-radius:16px;
+  margin-bottom:12px;
+  font-size:14px;
+}
+.msg.user{
+  background:#442C93;
+  color:#fff;
+  align-self:flex-end;
+}
+.msg.bot{
+  background:#e6e6e6;
+  color:#333;
+}
+
+.input-area{
+  padding:12px;
+  display:flex;
+  gap:10px;
+  border-top:1px solid #ddd;
+  background:#f0f0f0;
+}
+#chatInput{
+  flex:1;
+  padding:10px 14px;
+  border-radius:20px;
+  border:none;
+  outline:none;
+}
+.send-btn{
+  width:40px;
+  height:40px;
+  background:#442C93;
+  border:none;
+  border-radius:50%;
+  color:#fff;
+  font-size:18px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <nav>
+    <a href="home.html">Home</a>
+    <a href="dashboard1.html">Dashboard</a>
+    <a href="modules.html" class="active">Modules</a>
+  </nav>
+</header>
+
+<main class="container">
+
+<a href="modules.html" class="back-btn">← Back to Modules</a>
+
+<h1 class="page-title">The Trivia Engine</h1>
+<p class="page-sub">The Defense</p>
+
+<div class="game-box">
+  <iframe src="play.html"></iframe>
+</div>
+
+<section class="content-row">
+
+<div class="content-box">
+<h3>The Trivia Engine (The Defense)</h3>
+
+<p class="section-title">Narrative Context</p>
+<p>
+Before you can lead a study, you must speak the language. This is your Thesis Defense.
+In a real defense, questions come rapidly, and you must know your definitions without hesitation.
+If you don't know what a Variable or a Citation is, you cannot conduct research.
+</p>
+
+<p class="section-title">How it Works</p>
+<p>
+You will be presented with a question and four options.
+The answers shuffle every time, so you must read carefully.
+</p>
+
+<ul>
+  <li><strong>Foundations:</strong> Hypothesis vs Theory</li>
+  <li><strong>Search Strategies:</strong> Boolean operators (AND)</li>
+  <li><strong>Ethics:</strong> Informed Consent as a process</li>
+</ul>
+
+<p class="section-title">Educational Deep Dive (Strategy)</p>
+<ul>
+  <li>Speed matters, but accuracy matters more</li>
+  <li>Watch key terms: qualitative vs quantitative</li>
+  <li>Ignore academic-sounding distractors</li>
+</ul>
+
+<p class="section-title">Your Task</p>
+<p>
+Read the prompt. Select the single best answer. Beat the clock.
+</p>
+</div>
+
+<div class="video-container">
+  <iframe src="https://www.youtube.com/embed/5egTu1EmIqQ" allowfullscreen></iframe>
+</div>
+
+</section>
+
+</main>
+
+<!-- ================= CHATBOT ================= -->
+<div class="chat-icon" onclick="toggleChatbot()">💬</div>
+
+<div class="chat-wrapper" id="chatWrapper">
+  <div class="chat-header">
+    <div>
+      <div class="chat-header-title">Research Assistant</div>
+      <div class="chat-header-sub">Always here to help</div>
+    </div>
+    <div class="close-btn" onclick="toggleChatbot()">×</div>
+  </div>
+
+  <div id="chatBox"></div>
+
+  <div class="input-area">
+    <input type="text" id="chatInput" placeholder="Ask me anything...">
+    <button class="send-btn" id="sendBtn">➤</button>
+  </div>
+</div>
+
+<script src="chatbot.js"></script>
+
+</body>
+</html>

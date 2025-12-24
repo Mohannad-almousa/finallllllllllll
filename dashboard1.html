@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Dashboard — Research Quest</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="TemplateData/style.css" />
+  <style>
+    :root {
+      --bg: #f7f7ef;
+      --card: #fafafa;
+      --accent: #1c0b3a;
+      --muted: #6b6b6b;
+      --highlight: #c8ff00;
+      --shadow: rgba(0, 0, 0, 0.15);
+    }
+
+    body {
+      margin: 0;
+      font-family: "Georgia", serif;
+      background: var(--bg);
+      color: #111;
+      padding: 24px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ======= NAVBAR ======= */
+    header.site-header {
+      display: flex;
+      justify-content: center; /* Center the header content */
+      align-items: center;
+      padding: 14px 50px;
+      background: #1c0b3a; /* Set to dark purple like the second image */
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    header .nav {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    header .nav a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+
+    /* Active and hover link styles */
+    header .nav a.active,
+    header .nav a:hover {
+      background: #c8ff00; /* Green color for active links */
+      color: #1c0b3a; /* Dark color for active links */
+    }
+
+    .user-stats {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      color: var(--muted);
+    }
+
+    .hero {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+
+    .welcome {
+      flex: 1;
+      background: var(--card);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 6px 18px var(--shadow);
+    }
+
+    .welcome h2 {
+      margin: 0 0 8px 0;
+      font-size: 20px;
+    }
+
+    .summary-cards {
+      display: flex;
+      gap: 12px;
+      width: 360px;
+    }
+
+    .card {
+      background: var(--accent);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      box-shadow: 0 6px 18px var(--shadow);
+    }
+
+    .card .num {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--card);
+      padding: 18px;
+      border-radius: 10px;
+      box-shadow: 0 6px 18px var(--shadow);
+    }
+
+    .progress-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .progress-row .meta {
+      width: 120px;
+      font-weight: 600;
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 12px;
+      background: #eee;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .progress-bar > i {
+      display: block;
+      height: 100%;
+      background: var(--highlight);
+      width: 0%; /* Dynamic width */
+    }
+
+    .small-card {
+      background: #f6eef6;
+      padding: 14px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .small-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .week-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <header class="site-header">
+      <div class="nav">
+        
+        <a href="home.html">Home</a>
+        <a href="dashboard.html" style="color: var(--highlight)">Dashboard</a>
+        <a href="modules.html">Modules</a>
+        
+      </div>
+      <div class="user-stats">
+        <div id="top-total-points">--</div>
+        <div id="top-badges">--</div>
+        <div id="top-modules">--</div>
+      </div>
+    </header>
+
+    <div class="hero">
+      <div class="welcome">
+        <h2 id="welcome-title">Welcome Back!</h2>
+        <p id="welcome-sub">You're making great progress. Keep it up!</p>
+      </div>
+      <div class="summary-cards">
+        <div class="card">
+          <div style="font-size: 12px; color: var(--muted)">Total Points</div>
+          <div class="num" id="card-total-points">--</div>
+        </div>
+        <div class="card">
+          <div style="font-size: 12px; color: var(--muted)">Badges</div>
+          <div class="num" id="card-badges">--</div>
+        </div>
+        <div class="card">
+          <div style="font-size: 12px; color: var(--muted)">Modules Done</div>
+          <div class="num" id="card-modules-done">--</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <div class="panel">
+          <h3>Your Progress</h3>
+          <div class="progress-row">
+            <div class="meta">Trivia (Beginner)</div>
+            <div class="progress-bar">
+              <i id="bar-beginner"></i>
+            </div>
+            <div style="width: 70px; text-align: right" id="txt-beginner">0</div>
+          </div>
+          <div class="progress-row">
+            <div class="meta">Sequencer</div>
+            <div class="progress-bar">
+              <i id="bar-intermediate"></i>
+            </div>
+            <div style="width: 70px; text-align: right" id="txt-intermediate">0</div>
+          </div>
+          <div class="progress-row">
+            <div class="meta">Error Hunter</div>
+            <div class="progress-bar">
+              <i id="bar-advanced"></i>
+            </div>
+            <div style="width: 70px; text-align: right" id="txt-advanced">0</div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top: 18px;">
+          <h3>Recent Sessions</h3>
+          <div style="max-height: 300px; overflow: auto;">
+            <table id="sessions-table">
+              <thead>
+                <tr>
+                  <th>When</th>
+                  <th>Lesson</th>
+                  <th>Score</th>
+                  <th>Errors</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="panel small-card">
+          <h4>Points and Achievements</h4>
+          <div class="small-row">
+            <div>Total Points</div>
+            <div id="right-total-points">--</div>
+          </div>
+          <div class="small-row">
+            <div>Badges</div>
+            <div id="right-badges">--</div>
+          </div>
+          <div class="small-row">
+            <div>Completion Rate</div>
+            <div id="right-completion">--</div>
+          </div>
+        </div>
+        <div class="panel small-card">
+          <h4>This Week</h4>
+          <div class="week-stats">
+            <div class="small-row">
+              <div>Study Time</div>
+              <div id="week-time">--</div>
+            </div>
+            <div class="small-row">
+              <div>Modules Started</div>
+              <div id="week-modules">--</div>
+            </div>
+            <div class="small-row">
+              <div>Points Earned</div>
+              <div id="week-points">--</div>
+            </div>
+            <div class="small-row">
+              <div>Streak</div>
+              <div id="week-streak">--</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FIREBASE DASHBOARD SCRIPT ================= -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+    import { getFirestore, collection, query, where, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBS6WZ13DKVvbdddE-azZrI2FuBrSe39u0",
+      authDomain: "login-1aba2.firebaseapp.com",
+      projectId: "login-1aba2",
+      storageBucket: "login-1aba2.appspot.com",
+      messagingSenderId: "393759404087",
+      appId: "1:393759404087:web:9581fde1afb9ca81decfb2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // ================== CONFIGURATION ==================
+    const PASS_THRESHOLD = 70; // Score required to pass
+    
+    // UPDATED: These match your Unity "LevelID" exactly
+    const beginnerLevels = ["Default_Config_Trivia"];
+    const intermediateLevels = ["Default_Config_Sequencer"];
+    const advancedLevels = ["Default_Config_ErrorHunter"];
+    
+    const ALL_LESSONS = [...beginnerLevels, ...intermediateLevels, ...advancedLevels];
+    // ===================================================
+
+
+    // ======== Helper Functions ========
+    function formatSecondsToHM(seconds){
+      if(!seconds || seconds <= 0) return "0s";
+      const h = Math.floor(seconds / 3600), m = Math.floor((seconds % 3600) / 60), s = Math.floor(seconds % 60);
+      return (h ? h + "h " : "") + (m ? m + "m " : "") + (!h && !m ? s + "s" : "");
+    }
+
+    function calculateStreak(daysSet){
+      if(!daysSet || daysSet.size === 0) return 0;
+      let streak = 0;
+      let cursor = new Date();
+      while(true){
+        const iso = cursor.toISOString().slice(0, 10);
+        if(daysSet.has(iso)){ streak++; cursor.setDate(cursor.getDate() - 1); }
+        else break;
+      }
+      return streak;
+    }
+
+    // ======== Auth Check ========
+    onAuthStateChanged(auth, async (user) => {
+      if(!user){ window.location.href = "login.html"; return; }
+      const uid = user.uid;
+      document.getElementById("welcome-title").innerText = `Welcome Back, ${user.displayName || user.email?.split('@')[0]}!`;
+      await renderDashboardForUser(uid);
+    });
+
+    // ======== Render Data ========
+    async function renderDashboardForUser(uid) {
+      try {
+        const sessionsQuery = query(
+          collection(db, "Sessions"),
+          where("uid", "==", uid),
+          orderBy("createdAt", "desc")
+        );
+        const sessionsSnap = await getDocs(sessionsQuery);
+
+        // Map data by Lesson ID
+        const progressData = {};
+        sessionsSnap.forEach(docSnap => {
+          const s = docSnap.data();
+          const lesson = s.lessonID || s.lesson_id;
+          const created = s.createdAt?.toDate?.() || new Date(); 
+          if (!lesson || typeof s.score !== "number") return;
+          
+          // Keep the best or latest score? Here we keep latest for "current status"
+          if (!progressData[lesson] || created > progressData[lesson].created) {
+            progressData[lesson] = { ...s, created };
+          }
+        });
+
+        // Calculate Totals
+        let totalPoints = 0, modulesDone = 0;
+        for (const lesson of ALL_LESSONS) {
+          const rec = progressData[lesson];
+          if (rec) { totalPoints += rec.score; if (rec.score >= PASS_THRESHOLD) modulesDone++; }
+        }
+
+        document.getElementById("top-total-points").innerText = `Points: ${totalPoints}`;
+        document.getElementById("top-modules").innerText = `Done: ${modulesDone}`;
+        document.getElementById("card-total-points").innerText = totalPoints;
+        document.getElementById("card-modules-done").innerText = modulesDone;
+
+        // Function to get level status
+        function getLevelData(levels) {
+            const lessonId = levels[0]; 
+            const record = progressData[lessonId];
+            if (!record) return { score: 0, passed: false, played: false };
+            
+            const actualScore = record.score || 0;
+            return { 
+                score: actualScore, 
+                passed: actualScore >= PASS_THRESHOLD,
+                played: true 
+            };
+        }
+
+        // Check status of each tier
+        const beg = getLevelData(beginnerLevels);
+        const mid = getLevelData(intermediateLevels);
+        const adv = getLevelData(advancedLevels);
+
+        // --- Trivia (Beginner) ---
+        // Since max score can be > 100, we cap the visual width at 100% so it doesn't break UI
+        let begWidth = Math.min(beg.score, 100);
+        document.getElementById("bar-beginner").style.width = `${begWidth}%`;
+        document.getElementById("txt-beginner").innerText = `${beg.score}`;
+
+        // --- Sequencer (Intermediate) - Unlocks if Trivia Passed ---
+        if (beg.passed) {
+            let midWidth = Math.min(mid.score, 100);
+            document.getElementById("bar-intermediate").style.width = `${midWidth}%`;
+            document.getElementById("txt-intermediate").innerText = `${mid.score}`;
+            document.getElementById("bar-intermediate").parentElement.parentElement.style.opacity = "1";
+        } else {
+            document.getElementById("bar-intermediate").style.width = `0%`;
+            document.getElementById("txt-intermediate").innerText = "Locked 🔒";
+            document.getElementById("bar-intermediate").parentElement.parentElement.style.opacity = "0.5";
+        }
+
+        // --- Error Hunter (Advanced) - Unlocks if Sequencer Passed ---
+        if (mid.passed) {
+            let advWidth = Math.min(adv.score, 100);
+            document.getElementById("bar-advanced").style.width = `${advWidth}%`;
+            document.getElementById("txt-advanced").innerText = `${adv.score}`;
+            document.getElementById("bar-advanced").parentElement.parentElement.style.opacity = "1";
+        } else {
+            document.getElementById("bar-advanced").style.width = `0%`;
+            document.getElementById("txt-advanced").innerText = "Locked 🔒";
+            document.getElementById("bar-advanced").parentElement.parentElement.style.opacity = "0.5";
+        }
+
+        // Side Stats
+        document.getElementById("right-total-points").innerText = totalPoints;
+        document.getElementById("right-completion").innerText = `${Math.round((modulesDone / ALL_LESSONS.length) * 100)}%`;
+
+        // Session Table
+        const tbody = document.querySelector("#sessions-table tbody");
+        tbody.innerHTML = "";
+        let weekSeconds = 0, weekPoints = 0;
+        const modulesSet = new Set(), daysSet = new Set();
+        const now = new Date(), sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+        sessionsSnap.forEach(docSnap => {
+            const s = docSnap.data();
+            const created = s.createdAt?.toDate?.() || new Date();
+            const lesson = s.lessonID || s.lesson_id || "—";
+            const score = s.score || 0, errors = s.errors || 0, timeSpent = s.timeSpent || 0;
+            
+            modulesSet.add(lesson);
+            if (created >= sevenDaysAgo) { 
+                weekSeconds += timeSpent; 
+                weekPoints += score; 
+            }
+            daysSet.add(created.toISOString().slice(0, 10));
+            
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${created.toLocaleString()}</td>
+                <td>${lesson}</td>
+                <td><b style="color: ${score >= PASS_THRESHOLD ? 'green' : 'red'}">${score}</b></td>
+                <td>${errors}</td>
+                <td>${formatSecondsToHM(timeSpent)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById("week-time").innerText = formatSecondsToHM(weekSeconds);
+        document.getElementById("week-modules").innerText = modulesSet.size;
+        document.getElementById("week-points").innerText = weekPoints;
+        document.getElementById("week-streak").innerText = `${calculateStreak(daysSet)} days`;
+
+        console.log("✅ Dashboard rendered for user", uid);
+      } catch (err) { console.error("❌ Error rendering dashboard:", err); }
+    }
+  </script>
+</body>
+</html>

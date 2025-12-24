@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register</title>
+  <link rel="stylesheet" href="pageStyle.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body class="auth-body">
+
+  <div class="auth-shell">
+    <!-- LEFT -->
+    <aside class="auth-left">
+      <div class="auth-left-top">
+        <div class="auth-logo-mini">Research Quest</div>
+      </div>
+
+      <div class="auth-left-center">
+        <h2>Start Your Journey</h2>
+        <p>Join our research learning community today.</p>
+      </div>
+
+      <div class="auth-left-bottom">
+        text............................... <br>
+        .................................................<br>
+        .................................................<br>
+      </div>
+    </aside>
+
+    <!-- RIGHT (Form) -->
+    <main class="auth-right">
+      <div class="auth-header-top">
+        <div class="auth-title-wrap">
+          <h1>Create Account</h1>
+          <p class="login_title">Register to begin your learning journey.</p>
+        </div>
+
+        <div class="auth-tabs">
+          <span class="auth-tab-active">Sign Up</span>
+          <a href="login.html" class="auth-tab">Log In</a>   <!-- رابط لتسجيل الدخول إذا كان لدى المستخدم حساب -->
+        </div>
+      </div>
+
+      <form class="login_form"> <!-- فورم التسجيل -->
+
+        <div class="input_box"> 
+         <i class="fa-solid fa-user"></i>
+         <input type="text" id="name" placeholder="Full Name">  <!-- حقل إدخال الاسم الكامل -->
+        </div>
+
+
+        <div class="input_box">
+          <i class="fa-solid fa-envelope"></i>
+          <input type="text" id="email" placeholder="Email">   <!-- حقل إدخال البريد الإلكتروني -->
+        </div>
+
+        <div class="input_box">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" id="password" placeholder="Password"> <!-- حقل إدخال كلمة المرور -->
+        </div>
+
+        <div class="input_box">
+          <i class="fa-solid fa-lock"></i>
+          <input type="password" id="confirmPassword" placeholder="Confirm Password">   <!-- حقل إدخال تأكيد كلمة المرور -->
+        </div>
+
+        <button type="button" class="login_btn">Create Account</button>    <!-- زر إنشاء الحساب -->
+
+        <p class="register">
+          Already have an account?
+          <a href="login.html">Log In</a>    <!-- رابط لتسجيل الدخول -->
+        </p>
+
+        <div class="message_box"></div> <!-- صندوق لعرض الرسائل مثل الأخطاء أو النجاح -->
+      </form>
+
+    </main>
+  </div>
+
+  <!-- Firebase Register Script -->
+  <script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+    import { 
+      getAuth, 
+      createUserWithEmailAndPassword 
+    } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+
+    import { 
+      getFirestore, 
+      doc, 
+      setDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBS6WZ13DKVvbdddE-azZrI2FuBrSe39u0",
+      authDomain: "login-1aba2.firebaseapp.com",
+      projectId: "login-1aba2",
+      storageBucket: "login-1aba2.appspot.com",
+      messagingSenderId: "393759404087",
+      appId: "1:393759404087:web:9581fde1afb9ca81decfb2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const btn = document.querySelector(".login_btn");
+    const message = document.querySelector(".message_box");
+
+    btn.addEventListener("click", async () => {
+      
+      const name = document.getElementById("name").value.trim();
+
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const confirmPassword = document.getElementById("confirmPassword").value.trim();
+
+      message.style.display = "none";
+      message.classList.remove("error", "created");
+      
+
+       if (!name || !email || !password || !confirmPassword) {
+         message.textContent = "Please fill all fields!";
+         message.classList.add("error");
+         message.style.display = "block";
+         return;
+      }
+
+      if (!email || !password || !confirmPassword) {
+        message.textContent = "Please fill all fields!";
+        message.classList.add("error");
+        message.style.display = "block";
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        message.textContent = "Passwords do not match!";
+        message.classList.add("error");
+        message.style.display = "block";
+        return;
+      }
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // 🔥 إنشاء وثيقة داخل users باستخدام UID
+        await setDoc(doc(db, "users", user.uid), {
+          email: user.email,
+          name: name,
+          createdAt: serverTimestamp(),
+          lastLogin: serverTimestamp()
+        });
+
+        message.textContent = "Account created!";
+        message.classList.add("created");
+        message.style.display = "block";
+
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 1200);
+
+      } catch (error) {
+        message.classList.add("error");
+
+        if (error.code === "auth/email-already-in-use")
+          message.textContent = "Email already registered!";
+        else if (error.code === "auth/invalid-email")
+          message.textContent = "Invalid email format!";
+        else if (error.code === "auth/weak-password")
+          message.textContent = "Password should be at least 6 characters!";
+        else
+          message.textContent = error.message;
+
+        message.style.display = "block";
+      }
+
+    });
+
+  </script>
+
+</body>
+</html>

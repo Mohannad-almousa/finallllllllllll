@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard • Research Quest</title>
+  <link rel="stylesheet" href="pageStyle.css">
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header class="topbar">
+    <div class="logo">Research Quest</div>
+    <nav class="nav">
+      <a href="home.html">Home</a>
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="modules.html">Modules</a>
+      <a href="chatbot.html">ChatBot</a>
+
+      <button class="logout" id="btnLogout">Logout</button>
+      <span class="user-chip" id="userChip">...</span>
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <h1 class="page-title">Your Dashboard</h1>
+    <p class="page-sub">Overview of your research progress</p>
+
+    <div class="grid-3">
+
+      <div class="dash-card">
+        <h3>Total Modules Completed</h3>
+        <p id="completedModules">0</p>
+      </div>
+
+      <div class="dash-card">
+        <h3>Total Points</h3>
+        <p id="totalPoints">0</p>
+      </div>
+
+      <div class="dash-card">
+        <h3>Your Level</h3>
+        <p id="userLevel">Beginner</p>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBS6WZ13DKVvbdddE-azZrI2FuBrSe39u0",
+      authDomain: "login-1aba2.firebaseapp.com",
+      projectId: "login-1aba2",
+      storageBucket: "login-1aba2.appspot.com",
+      messagingSenderId: "393759404087",
+      appId: "1:393759404087:web:9581fde1afb9ca81decfb2"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const userChip = document.getElementById("userChip");
+    const btnLogout = document.getElementById("btnLogout");
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+      } else {
+        userChip.textContent = user.email;
+      }
+    });
+
+    btnLogout.addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "login.html";
+    });
+  </script>
+
+</body>
+</html>

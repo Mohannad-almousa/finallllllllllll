@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Quest • Home</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body{
+            background:#f5f7ef;    /* تحديد لون الخلفية الرئيسي للصفحة */
+            min-height:100vh;        /* جعل الحد الأدنى للارتفاع 100% من ارتفاع الشاشة */
+        }
+
+        /* ===== NAVBAR ===== */
+        header{
+            background:#442C93;   /* تحديد اللون الخلفي لشريط التنقل */
+            padding:14px 50px;      /* مسافة داخلية (Padding) */
+            display:flex;            /* استخدام flexbox لتوزيع العناصر بشكل أفقي */
+            justify-content:space-between;   /* توزيع المسافات بين العناصر */
+            align-items:center;               /* محاذاة العناصر عموديًا */
+            border-bottom:1px solid #eee;   /* إضافة حد سفلي بلون فاتح */
+        }
+
+        .logo{font-weight:700;font-size:18px;color:#eee}
+
+        nav{display:flex;gap:30px;}
+        nav a{text-decoration:none;color:#eee;font-weight:500;}
+        nav a.active{color:#D1E231;font-weight:700;}
+
+        .login{font-weight:600;text-decoration:none;color:#222;}
+
+        /* ===== CONTAINER ===== */
+        .container{
+            max-width:1200px;
+            margin:40px auto;
+            padding:20px;    /* إضافة مسافة داخلية */
+        }
+
+        /* ===== HERO ===== */
+        .hero{
+            background:linear-gradient(135deg,#442C93,#442C93);   /* خلفية تحتوي على تدرج لوني */
+            border-radius:25px;                      /* جعل الزوايا دائرية */
+            padding:90px 80px;                    /* إضافة مسافة داخلية */
+            color:#fff;                        /* تحديد اللون للنص */
+        } 
+
+        .hero h1{
+            font-size:42px;
+            margin-bottom:20px;
+        }
+
+        .hero span{
+            color:#D1E231;
+            font-weight:800;
+        }
+
+        .hero p{
+            font-size:18px;
+            color:#e7e7e7;
+            margin-bottom:40px;
+            line-height:1.7;
+            max-width:650px;
+        }
+
+        .hero button{
+            padding:12px 36px;
+            border-radius:30px;
+            border:none;
+            font-size:16px;
+            cursor:pointer;
+        }
+
+        /* =========================== Chat Icon =========================== */
+        .chat-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 55px;
+            height: 55px;
+            background-color: #442C93;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 24px;
+            box-shadow: 0 6px 15px #442C93;
+            z-index: 1000;
+        }
+
+        /* =========================== Chat Wrapper =========================== */
+        .chat-wrapper {
+            position: fixed;
+            bottom: 95px;
+            right: 30px;
+            width: 320px;
+            height: 480px;
+            background: #fafafa;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px #442C93;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 999;
+        }
+
+        /* =========================== Chat Header =========================== */
+        .chat-header {
+            background: #442C93;
+            padding: 14px 18px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header-title {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .chat-header-sub {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .close-btn {
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        /* =========================== Chat Box =========================== */
+        #chatBox {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #f7f7f0;
+        }
+
+        .msg {
+            max-width: 85%;
+            padding: 12px 14px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .msg.user {
+            background: #442C93;
+            color: white;
+            align-self: flex-end;
+        }
+
+        .msg.bot {
+            background: #e6e6e6;
+            color: #333;
+            align-self: flex-start;
+        }
+
+        /* =========================== Input Area =========================== */
+        .input-area {
+            padding: 12px;
+            display: flex;
+            gap: 10px;
+            border-top: 1px solid #ddd;
+            background: #f0f0f0;
+        }
+
+        #chatInput {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 20px;
+            border: none;
+            outline: none;
+        }
+
+        .send-btn {
+            width: 40px;
+            height: 40px;
+            background: #442C93;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .send-btn:hover {
+            background: #442C93;
+        }
+        .login{
+          color:#eee
+        }
+    </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Research Quest</div>
+  <nav>
+    <a href="home.html" class="active">Home</a>
+    <a href="dashboard1.html">Dashboard</a>
+    <a href="modules.html">Modules</a>
+  </nav>
+  <a href="login.html" class="login">Log In</a>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <h1><span>WELCOME</span> To Research Quest Platform</h1>
+    <p>
+      Master the art of scientific inquiry.
+      Learn by doing through interactive modules and challenges.
+    </p>
+    <button onclick="location.href='modules.html'">Start</button>
+  </section>
+</main>
+
+<!-- Chatbot Icon -->
+<div class="chat-icon" onclick="toggleChatbot()">💬</div>
+
+<!-- Chatbot Wrapper -->
+<div class="chat-wrapper" id="chatWrapper">
+    <div class="chat-header">
+        <div>
+            <div class="chat-header-title">Research Assistant</div>
+            <div class="chat-header-sub">Always here to help</div>
+        </div>
+        <div class="close-btn" onclick="toggleChatbot()">×</div>
+    </div>
+    <div id="chatBox"></div>
+    <div class="input-area">
+        <input type="text" id="chatInput" placeholder="Ask me anything...">
+        <button class="send-btn" id="sendBtn">➤</button>
+    </div>
+</div>
+
+<script src="chatbot.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Research Quest Game</title>
+  <link rel="shortcut icon" href="TemplateData/favicon.ico">
+  <link rel="stylesheet" href="TemplateData/style.css">
+  <style>
+    body { margin:0; background:#fff; display:flex; justify-content:center; align-items:flex-start; height:100vh; }
+    #unity-container { width:100%; max-width:1100px; margin-top:20px; display:flex; flex-direction:column; align-items:center; }
+    #unity-canvas { width:100% !important; height:700px !important; background:#000; border-radius:10px; }
+    #unity-footer { margin-top:10px; }
+  </style>
+</head>
+<body>
+<div id="unity-container">
+  <canvas id="unity-canvas"></canvas>
+  <div id="unity-loading-bar">
+    <div id="unity-logo"></div>
+    <div id="unity-progress-bar-empty">
+      <div id="unity-progress-bar-full"></div>
+    </div>
+  </div>
+  <div id="unity-warning"></div>
+  <div id="unity-footer">
+    <div id="unity-webgl-logo"></div>
+    <div id="unity-fullscreen-button"></div>
+    <div id="unity-build-title">Research Quest Game</div>
+  </div>
+</div>
+
+<!-- UNITY LOADER -->
+<script>
+  var canvas=document.querySelector("#unity-canvas");
+  var loadingBar=document.querySelector("#unity-loading-bar");
+  var progressBarFull=document.querySelector("#unity-progress-bar-full");
+  var fullscreenButton=document.querySelector("#unity-fullscreen-button");
+  var warningBanner=document.querySelector("#unity-warning");
+
+  function unityShowBanner(msg,type){
+    var div=document.createElement("div"); 
+    div.innerHTML=msg;
+    warningBanner.appendChild(div);
+    div.style=type==="error"?"background:red;padding:10px;":"background:yellow;padding:10px;";
+    setTimeout(()=>{ warningBanner.removeChild(div); },5000);
+  }
+
+  var buildUrl="WebGL-Builds_ErrorHunter/WebGL-Builds/Build";
+  var loaderUrl=buildUrl+"/WebGL-Builds.loader.js";
+  var config={
+    dataUrl:buildUrl+"/WebGL-Builds.data",
+    frameworkUrl:buildUrl+"/WebGL-Builds.framework.js",
+    codeUrl:buildUrl+"/WebGL-Builds.wasm",
+    streamingAssetsUrl:"StreamingAssets",
+    companyName:"ResearchQuest",
+    productName:"ResearchQuestGame",
+    productVersion:"1.0",
+    showBanner:unityShowBanner
+  };
+
+  loadingBar.style.display="block";
+
+  var script=document.createElement("script");
+  script.src=loaderUrl;
+  script.onload=()=>{
+    createUnityInstance(canvas,config,progress=>{
+      progressBarFull.style.width=100*progress+"%";
+    }).then(unityInstance=>{
+      loadingBar.style.display="none";
+      fullscreenButton.onclick=()=>unityInstance.SetFullscreen(1);
+      window.unityInstance=unityInstance;
+    }).catch(alert);
+  };
+  document.body.appendChild(script);
+
+  document.addEventListener("click",()=>{
+    if(window.unityInstance && window.unityInstance.Module.audioContext)
+      if(window.unityInstance.Module.audioContext.state==="suspended")
+        window.unityInstance.Module.audioContext.resume();
+  },{once:true});
+</script>
+
+<!-- FIREBASE INTEGRATION -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+  const firebaseConfig={
+    apiKey:"AIzaSyBS6WZ13DKVvbdddE-azZrI2FuBrSe39u0",
+    authDomain:"login-1aba2.firebaseapp.com",
+    projectId:"login-1aba2",
+    storageBucket:"login-1aba2.appspot.com",
+    messagingSenderId:"393759404087",
+    appId:"1:393759404087:web:9581fde1afb9ca81decfb2"
+  };
+
+  const app=initializeApp(firebaseConfig);
+  const db=getFirestore(app);
+  const auth=getAuth(app);
+
+  window.currentUser=null;
+  onAuthStateChanged(auth,user=>{
+    if(!user) window.location.href="login.html";
+    else window.currentUser=user;
+  });
+
+  window.saveProgressToFirebase=async function(lessonID,score,errors,timeSpent){
+    const user=window.currentUser;
+    if(!user){ setTimeout(()=>saveProgressToFirebase(lessonID,score,errors,timeSpent),500); return; }
+
+    const progressRef=doc(db,"progress",user.uid);
+    await setDoc(progressRef,{
+      name:user.displayName||user.email,
+      [lessonID]:{score:Number(score),errors:Number(errors),timeSpent:Number(timeSpent),updatedAt:new Date()}
+    },{merge:true});
+    console.log("✅ Progress saved to Firestore!");
+  };
+
+  window.saveSessionData=async function(lessonID,score,errors,timeSpent){
+    const user=window.currentUser;
+    if(!user){ setTimeout(()=>saveSessionData(lessonID,score,errors,timeSpent),500); return; }
+
+    await addDoc(collection(db,"Sessions"),{
+      uid:user.uid,
+      lessonID:lessonID,
+      score:Number(score),
+      errors:Number(errors),
+      timeSpent:Number(timeSpent),
+      createdAt:serverTimestamp(),
+      device:navigator.userAgent
+    });
+    console.log("🟣 Session saved to Firestore!");
+  };
+
+  // استلام البيانات من Unity
+  window.receiveLessonData=function(lessonID,score,errors,timeSpent){
+    console.log("🟢 Unity → Web Data Received",lessonID,score,errors,timeSpent);
+    saveProgressToFirebase(lessonID,score,errors,timeSpent);
+    saveSessionData(lessonID,score,errors,timeSpent);
+  };
+</script>
+</body>
+</html>
